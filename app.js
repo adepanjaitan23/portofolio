@@ -51,7 +51,8 @@
         .then(function (r) { return r && r.ok ? { ok: true } : { ok: false, error: (r && r.error) || 'server', detail: (r && r.detail) || '' }; })
         .catch(function (e) { return { ok: false, error: 'server', detail: String(e && e.message || e) }; });
     };
-    document.dispatchEvent(new Event('DOMContentLoaded'));
+    // Bila halaman masih 'loading' (render dari cache), DOMContentLoaded asli akan terpanggil sendiri → jangan dobel
+    if (document.readyState !== 'loading') document.dispatchEvent(new Event('DOMContentLoaded'));
   }
 
   var cached = null;
