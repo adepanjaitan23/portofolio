@@ -28,7 +28,23 @@
     return { view: 'home', slug: '' };
   }
 
+  // URL logo LinkedIn (licdn) bertanda tangan & kedaluwarsa → ganti favicon situs penerbit
+  function fixLogo(u) {
+    u = String(u || '');
+    if (!/licdn\.com/i.test(u)) return u;
+    var m = [['google_logo', 'google.com'], ['dicoding_logo', 'dicoding.com'], ['coursera', 'coursera.org'], ['credly', 'credly.com']];
+    for (var i = 0; i < m.length; i++) if (u.toLowerCase().indexOf(m[i][0]) > -1) return 'https://www.google.com/s2/favicons?domain=' + m[i][1] + '&sz=128';
+    return '';
+  }
+  function fixData(d) {
+    ['certifications', 'experiences', 'educations', 'awards', 'publications'].forEach(function (k) {
+      (d[k] || []).forEach(function (r) { if (r.badgeurl) r.badgeurl = fixLogo(r.badgeurl); if (r.logourl) r.logourl = fixLogo(r.logourl); });
+    });
+    return d;
+  }
+
   function render(data) {
+    data = fixData(data);
     var base = location.origin + location.pathname;
     var D = {
       experiences: data.experiences || [], educations: data.educations || [], projects: data.projects || [],
